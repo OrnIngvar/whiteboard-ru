@@ -31,14 +31,14 @@
     }
 
     // Circle
-    function Circle(x, y, radius) {
+    function Circle(x, y) {
         this.x = x;
         this.y = y;
-        this.radius = radius;
+        this.radius = x + y / 2;
     }
     Circle.prototype.Draw = function (ctx) {
         ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, false);
+        ctx.arc(this.x, this.y, 70, 0, 2 * Math.PI, false);
         ctx.fillStyle = "#8ED6FF";
         ctx.fill();
         ctx.lineWidth = 5;
@@ -46,6 +46,21 @@
         ctx.stroke();
     }
     Circle.prototype.SetEnd = function (x, y) {
+        this.endX = x;
+        this.endY = y;
+    }
+
+    //Line
+    function Line(x,y){
+        this.x = x;
+        this.y = y;
+    }
+    Line.prototype.Draw = function(ctx){
+        ctx.moveTo(this.x,this.y);
+        ctx.lineTo(this.endX,this.endY);
+        ctx.stroke();
+    }
+    Line.prototype.SetEnd = function (x,y) {
         this.endX = x;
         this.endY = y;
     }
@@ -73,11 +88,25 @@
     Pen.prototype.Draw = function (ctx) {
         ctx.beginPath();
 
-        for( i=0; i < this.points.length; i++ ){
+        for (i = 0; i < this.points.length; i++) {
             //ctx.moveTo(this.points[i].x, this.points[i].y);
             ctx.lineTo(this.points[i].x, this.points[i].y);
             ctx.stroke();
         }
+    }
+
+    //Text
+    function Text(x,y){
+        this.x = x;
+        this.y = y;
+    }
+    Text.prototype.SetEnd = function(x,y){
+        this.endX = x;
+        this.endY = y;
+    }
+    Text.prototype.Draw = function(ctx){
+        ctx.font = "40pt Calibri";
+        ctx.fillText("Hello World!", this.x, this.y);
     }
 
     function Redraw(ctx) {
@@ -110,15 +139,11 @@
 
     function setShape(shapeName) {
         $("#message2").text('shapeName: ' + shapeName);
-        if (shapeName == 'Circle') {
-            factory = function (x, y, radius) {
-                return eval("new " + shapeName + "(x,y,radius)");
-            }
-        } else {
-            factory = function (x, y) {
-                return eval("new " + shapeName + "(x,y)");
-            }
+
+        factory = function (x, y) {
+            return eval("new " + shapeName + "(x,y)");
         }
+
     }
 
     $(document).ready(function () {
@@ -179,7 +204,9 @@
 </canvas>
 <button onclick="setShape('Rectangle');">Rectangle</button>
 <button onclick="setShape('Circle');">Circle</button>
-<button onclick="setShape('Pen');">Line</button>
+<button onclick="setShape('Pen');">Pen</button>
+<button onclick="setShape('Line');">Line</button>
+<button onclick="setShape('Text');">Text</button>
 <p id="message"></p>
 
 <p id="message2"></p>
