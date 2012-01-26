@@ -154,10 +154,11 @@
         var startX = 0;
         var startY = 0;
         var mouseIsDown = false;
-
+        /*
         var centerX = canvas.width / 2;
         var centerY = canvas.height / 2;
         var radius = 70;
+        */
 
         $("#theCanvas").mousedown(function (e) {
 
@@ -192,8 +193,6 @@
                 }
 
                 $("#message").text('factory: ' + factory);
-                //context.lineTo(x, y);
-                //context.stroke();
             }
         });
     });
@@ -202,11 +201,13 @@
 <canvas id="theCanvas" width="400" height="400">
     <p>No support for canvas, sorry</p>
 </canvas>
+<p>
 <button onclick="setShape('Rectangle');">Rectangle</button>
 <button onclick="setShape('Circle');">Circle</button>
 <button onclick="setShape('Pen');">Pen</button>
 <button onclick="setShape('Line');">Line</button>
 <button onclick="setShape('Text');">Text</button>
+</p>
 <p id="message"></p>
 
 <p id="message2"></p>

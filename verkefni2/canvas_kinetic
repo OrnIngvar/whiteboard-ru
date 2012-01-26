@@ -43,6 +43,16 @@
             context.fillText(message, 10, 25);
         }
 
+        function drawLayer(shapesLayer, shape) {
+            var context = shapesLayer.getContext();
+            //shapesLayer.clear();
+
+            context.font = "18pt Calibri";
+            context.fillStyle = "black";
+            context.fillText(shape, 10, 25);
+
+        }
+
         //Rectangle.Inherits( Shape );
         function Rectangle(x, y) {
             return new Kinetic.Shape(function () {
@@ -120,6 +130,8 @@
 
                 mouseIsDown = true;
                 //var rectangle = new Rectangle( x, y );
+                drawLayer(shapesLayer, this);
+
                 shapesLayer.add(rectangle);
 
                 //shapes.push(factory(x, y));
@@ -142,6 +154,8 @@
                         stage.draw();
                         //Redraw(context);
                     }
+
+                    drawLayer(shapesLayer, lastShape);
                 }
             });
 
@@ -149,6 +163,7 @@
                 mouseIsDown = false;
             })
 
+            /*
             triangle.on("mouseout", function () {
                 writeMessage(messageLayer, "Mouseout triangle");
             });
@@ -187,7 +202,7 @@
             });
 
             shapesLayer.add(circle);
-
+            */
             stage.add(shapesLayer);
             stage.add(messageLayer);
         });
