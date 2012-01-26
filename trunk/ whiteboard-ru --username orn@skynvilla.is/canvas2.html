@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style type="text/css">
+    #theCanvas { border: 1px solid #000; }
+
+    </style>
+    <script src="http://code.jquery.com/jquery-1.7.1.js"></script>
+    <script src="kinetic-v3.6.2.min.js"></script>
+</head>
+<body>
+<script type="TEXT/JAVASCRIPT">
+
+    var shapes = [];
+    var factory = createRect;
+
+    function Rectangle( x, y ){
+        this.x = x;
+        this.y = y;
+        this.endX = x;
+        this.endY = y;
+    }
+    Rectangle.prototype.Draw = new Kinetic.Shape(function( ){
+        var ctx = this.getContext();
+        ctx.strokeRect( this.x, this.y , this.endX, this.endY );
+    });
+    Rectangle.prototype.SetEnd = function(x,y){
+        this.endX = x;
+        this.endY = y;
+    }
+
+    // Circle
+    function Circle( x, y, radius ){
+        this.x = x;
+        this.y = y;
+        this.radius = radius;
+    }
+    Circle.prototype.Draw = function( ctx ){
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, false);
+        ctx.fillStyle = "#8ED6FF";
+        ctx.fill();
+        ctx.lineWidth = 5;
+        ctx.strokeStyle = "black";
+        ctx.stroke();
+    }
+    Circle.prototype.SetEnd = function( x, y ){
+        this.endX = x;
+        this.endY = y;
+    }
+
+    // Pen
+    function Pen( x, y ){
+        this.points = [];
+
+        var firstPoint =
+        {
+            "x" : x,
+            "y" : y
+        };
+
+        this.points.push( firstPoint );
+    }
+    Pen.prototype.SetEnd = function(x,y){
+        var nextPoint =
+        {
+            "x" : x,
+            "y" : y
+        };
+        this.points.push( nextPoint );
+    }
+    Pen.prototype.Draw = function( ctx ){
+        ctx.beginPath();
+
+        ctx.moveTo( Pen.firstPoint );
+        //foreach point in the rest of the points
+        //    ctx.lineTo( nextPoint );
+    }
+
+    function Redraw( ctx ){
+        ctx.clearRect( 0, 0, 800, 400 );
+        for (var i = 0; i < shapes.length; i++ ){
+            shapes[i].Draw( ctx );
+        }
+    }
+
+    function createRect( x, y ){
+        return new Rectangle(x,y);
+    }
+    function setRect(){
+        factory = createRect;
+    }
+
+    function createCircle( x, y, radius ){
+        return new Circle(x,y, radius );
+    }
+    function setCircle(){
+        factory = createCircle;
+    }
+
+    function createPen( x, y ){
+        return new Pen( x, y);
+    }
+    function setPen(){
+        factory = createPen;
+    }
+
+    function setShape( shapeName ){
+        $("#message2").text( 'shapeName: ' + shapeName);
+        if (shapeName == 'Circle' ){
+            factory = function(x,y,radius){
+                return eval( "new " + shapeName + "(x,y,radius)" );
+            }
+        }else{
+            factory = function(x,y){
+                return eval( "new " + shapeName + "(x,y)" );
+            }
+        }
+    }
+
+$(document).ready( function (){
+
+    var canvas = document.getElementById( "theCanvas" );
+    var context = canvas.getContext("2d");
+
+    var startX = 0;
+    var startY = 0;
+    var mouseIsDown = false;
+
+    var centerX = canvas.width / 2;
+    var centerY = canvas.height / 2;
+    var radius = 70;
+
+    $( "#theCanvas" ).mousedown( function (e){
+
+        var x = e.pageX - this.offsetLeft;
+        var y = e.pageY - this.offsetTop;
+        startX = x;
+        startY = y;
+
+        mouseIsDown = true;
+
+        shapes.push( factory( x, y ) );
+        $("#message").text( "x: " + x+ " y: " + y + " factory: " + factory );
+
+    });
+
+    $( "#theCanvas" ).mouseup( function(e){
+        mouseIsDown = false;
+    });
+
+    $( "#theCanvas" ).mousemove( function(e){
+        if ( mouseIsDown ){
+            var x = e.pageX - this.offsetLeft;
+            var y = e.pageY - this.offsetTop;
+
+            var lastShape = shapes[ shapes.length - 1];
+
+            lastShape.SetEnd( x, y );
+
+            if ( lastShape != undefined ){
+                lastShape.SetEnd( x, y );
+                Redraw( context );
+            }
+
+            //if (shapeName == Pen){
+                $("#message").text( 'factory: ' + factory);
+                context.lineTo( x, y);
+                context.stroke();
+            //}
+        }
+    });
+});
+
+</script>
+<p>
+Lorem ipsum  Lorem ipsum  Lorem ipsum  Lorem ipsum
+</p>
+<canvas id="theCanvas" width="400" height="400">
+    <p>No support for canvas, sorry</p>
+</canvas>
+<button onclick="setShape('Rectangle');">Rectangle</button>
+<button onclick="setShape('Circle');">Circle</button>
+<button onclick="setShape('Pen');">Line</button>
+<p id="message" ></p>
+<p id="message2" ></p>
+</body>
+</html>
