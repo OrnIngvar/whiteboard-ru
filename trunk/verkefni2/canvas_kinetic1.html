@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style type="text/css">
+        #theCanvas {
+            border: 1px solid #000;
+        }
+
+    </style>
+    <script src="http://code.jquery.com/jquery-1.7.1.js"></script>
+    <script src="kinetic-v3.6.2.js"></script>
+    <script>
+        var shapes = [];
+        var factory = createRect;
+
+        function writeMessage(messageLayer, message) {
+            var context = messageLayer.getContext();
+            messageLayer.clear();
+            context.font = "18pt Calibri";
+            context.fillStyle = "black";
+            context.fillText(message, 10, 25);
+        }
+
+        function Rectangle(x, y) {
+//            $("#message2").text('rectangle constructor');
+            return new Kinetic.Shape(function (  ) {
+                var ctx = this.getContext();
+                this.x = x;
+                this.y = y;
+                this.endX = x;
+                this.endY = y;
+                ctx.fillRect(this.x, this.y, this.endX, this.endY);
+                //$("#message3").text("in constructor of rectangle" )
+            }
+
+        )}
+        /*
+        Rectangle.prototype.constructor = new Kinetic.Shape(function () {
+            var ctx = this.getContext();
+            ctx.strokeRect(this.x, this.y, this.endX, this.endY);
+        });
+        */
+        Rectangle.prototype.SetEnd = function (x, y) {
+            this.endX = x;
+            this.endY = y;
+        }
+
+        function createRect(x, y) {
+            return new Rectangle(x, y);
+        }
+        function setRect() {
+            factory = createRect;
+        }
+
+        function Redraw(ctx) {
+            ctx.clearRect(0, 0, 800, 400);
+            for (var i = 0; i < shapes.length; i++) {
+                shapes[i].Draw(ctx);
+            }
+        }
+
+        function setShape(shapeName) {
+            $("#message2").text('shapeName: ' + shapeName);
+
+            factory = function (x, y) {
+                return eval("new " + shapeName + "(x,y)");
+            }
+        }
+
+        $(document).ready(function () {
+            var stage = new Kinetic.Stage("theCanvas", 578, 200);
+//            $("#message").text("stage : " + stage)
+
+            var shapesLayer = new Kinetic.Layer();
+            var messageLayer = new Kinetic.Layer();
+
+            var mouseIsDown = false;
+            var mousePos = stage.getMousePosition();
+
+            stage.getContainer().mouseDown = function(){
+                $("#message").text("ready  " + "mousepos:"  + mouseIsDown );
+                stage.draw();
+                console.log("drawing stage");
+            }
+            writeMessage( messageLayer, "stage : " + stage);
+
+            stage.on("mousedown", function () {
+                var mousePos = stage.getMousePosition();
+                var x = mousePos.x;
+                var y = mousePos.y;
+
+                mouseIsDown = true;
+                var rectangle = new Kinetic.Shape(function () {
+                    var canvas = this.getCanvas();
+                    var ctx = this.getContext();
+
+                    ctx.fillRect(x, y, 100, 250);
+                });
+                //drawLayer(shapesLayer, this);
+                $("#message3").text("mousedown  " + "rectangle:"  + rectangle.x + rectangle.y);
+                writeMessage( messageLayer, "mousedown");
+                shapesLayer.add(rectangle);
+
+                stage.add(shapesLayer);
+                stage.add(messageLayer);
+                stage.draw();
+                //TODO : figgure this out
+                shapes.push(factory(x, y));
+                $("#message3").text("on mousedown x: " + x + " y: " + y + " factory: " + factory);
+
+            });
+                /*
+            var rectangle = new Kinetic.Shape(function(){
+                var context = this.getContext();
+                context.beginPath();
+                context.rect(0, 0, 100, 50);
+                context.lineWidth = 4;
+                context.strokeStyle = "black";
+                context.fillStyle = "#00D2FF";
+                context.fill();
+                context.stroke();
+                context.closePath();
+            });
+            //$("#message").text("ready  " + "mousepos:"  + mouseIsDown );
+
+//            $("#message3").text("stage: "  + shapesLayer );
+            //TODO: Bind mouseevents without first needing to create a Kinetic shape
+
+
+
+            rectangle.on("mousemove", function (e) {
+                if (mouseIsDown) {
+                    var mousePos = stage.getMousePosition();
+                    var x = mousePos.x;
+                    var y = mousePos.y;
+                    //TODO: rework for kinetic, maybe shapes array holds shapelayers ?
+                    var lastShape = shapes[ shapes.length - 1];
+                    console.log( lastShape );
+                    //lastShape.SetEnd(x, y);
+
+                    if (lastShape != undefined) {
+                        //lastShape.SetEnd(x, y);
+                        shapesLayer.draw();
+                        stage.draw();
+                        //Redraw(context);
+                    }
+                }
+            });
+
+            rectangle.on("mouseup" , function(){
+                mouseIsDown = false;
+            })
+*/
+//            shapesLayer.add(rectangle);
+            stage.add(shapesLayer);
+            stage.add(messageLayer);
+
+        });
+
+    </script>
+</head>
+<body onmousedown="return false;">
+
+<canvas id="theCanvas" width="1000" height="500">
+    <p>No support for canvas, sorry</p>
+</canvas>
+
+<div id="container">
+</div>
+<p>
+    <button onclick="setShape('Rectangle');">Rectangle</button>
+    <button onclick="setShape('Circle');">Circle</button>
+    <button onclick="setShape('Pen');">Pen</button>
+    <button onclick="setShape('Line');">Line</button>
+    <button onclick="setShape('Text');">Text</button>
+    <button onclick="if(drawingActive) drawingActive=false; else drawingActive = true;">Drawing toggle</button>
+</p>
+<p id="message"></p>
+
+<p id="message2"></p>
+<p id="message3"></p>
+</body>
+
+</html>
