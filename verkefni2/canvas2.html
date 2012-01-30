@@ -146,6 +146,14 @@
 
     }
 
+    function Stringify(arr) {
+        return JSON.stringify(arr);
+    }
+
+    function Arrayfy(str) {
+
+    }
+
     $(document).ready(function () {
 
         var canvas = document.getElementById("theCanvas");
@@ -195,6 +203,82 @@
                 $("#message").text('factory: ' + factory);
             }
         });
+
+        $("#saveTemplate").click(function () {
+            var title = prompt("Whats the name of the template?");
+            if (title == "") {
+                var stringifiedArray = Stringify(g_shapes);
+                var param = { "user" : "david_og_orn",
+                    "name" : title,
+                    "content" : stringifiedArray,
+                    "template" : true
+                };
+
+            $.ajax({
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                url: "http://whiteboard.apphb.com/Home/Save",
+                data: param,
+                dataType: "jasonp",
+                crossDomain: true,
+                success: function (data) {
+                    var arr = [{ "ID": data.ID,
+                        "WhiteboardTitle": title
+                    }];
+                    $("#templateTemplate").tmpl(arr).appendTo("#templateSelect");
+                },
+                error: function (xhr, err) {
+                    alert("error");
+                }
+            });
+            }
+        });
+
+        $("#templateSelect").dblclick(function (e) {
+            var item = this.options[this.selectedIndex].value;
+            var param = { "id": item };
+            $.ajax({
+                type: "GET",
+                contentType: "application/json; charset=utf-8",
+                url: "http://whiteboard.apphb.com/Home/GetList",
+                data: param,
+                dataType: "jasonp",
+                crossDomain: true,
+                success: function (data) {
+                    var items = JSON.parse(data.WhiteboardContents);
+                    for (var i = 0; i < items.length; i++){
+                        var func = eval(items[i].ClassName);
+                        items[i].__proto__ = func.prototype;
+                        g_shapes.push(items[i]);
+                    }
+
+                    Redraw(context);
+                },
+                error: function (xhr, err) {
+                    alert("error:\n" + xhr + "\n" + err);
+                }
+            });
+        });
+
+        var param = {
+            "user": "david_og_orn",
+            "template": true
+        };
+
+        $.ajax({
+            type: "GET",
+            contentType: "application/json; charset=utf-8",
+            url: "http://whiteboard.apphb.com/Home/GetList",
+            data: param,
+            dataType: "jasonp",
+            crossDomain: true,
+            success: function (data) {
+                $("#templateTemplate").tmpl(data).appendTo("#templateSelect");
+            },
+            error: function (xhr, err) {
+                alert("error:\n" + xhr + "\n" + err);
+            }
+        });
     });
 
 </script>
@@ -207,6 +291,14 @@
 <button onclick="setShape('Pen');">Pen</button>
 <button onclick="setShape('Line');">Line</button>
 <button onclick="setShape('Text');">Text</button>
+</p>
+<p>
+    <select multiple="multiple" id="templateSelect">
+
+    </select>
+    <script id="templateTemplate" type="text/html">
+        <option value='${ID}'>${WhiteboardTitle}</option>
+    </script>
 </p>
 <p id="message"></p>
 
