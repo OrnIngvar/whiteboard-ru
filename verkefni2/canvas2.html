@@ -9,6 +9,7 @@
     </style>
     <script src="http://code.jquery.com/jquery-1.7.1.js"></script>
     <script src="kinetic-v3.6.2.min.js"></script>
+    <script src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
 </head>
 <body>
 <script type="TEXT/JAVASCRIPT">
@@ -208,7 +209,7 @@
             var title = prompt("Whats the name of the template?");
             if (title == "") {
                 var stringifiedArray = Stringify(g_shapes);
-                var param = { "user" : "david_og_orn",
+                var param = { "user" : "dabs",
                     "name" : title,
                     "content" : stringifiedArray,
                     "template" : true
@@ -219,7 +220,7 @@
                 contentType: "application/json; charset=utf-8",
                 url: "http://whiteboard.apphb.com/Home/Save",
                 data: param,
-                dataType: "jasonp",
+                dataType: "jsonp",
                 crossDomain: true,
                 success: function (data) {
                     var arr = [{ "ID": data.ID,
@@ -242,7 +243,7 @@
                 contentType: "application/json; charset=utf-8",
                 url: "http://whiteboard.apphb.com/Home/GetList",
                 data: param,
-                dataType: "jasonp",
+                dataType: "jsonp",
                 crossDomain: true,
                 success: function (data) {
                     var items = JSON.parse(data.WhiteboardContents);
@@ -261,7 +262,7 @@
         });
 
         var param = {
-            "user": "david_og_orn",
+            "user": "dabs",
             "template": true
         };
 
@@ -270,7 +271,7 @@
             contentType: "application/json; charset=utf-8",
             url: "http://whiteboard.apphb.com/Home/GetList",
             data: param,
-            dataType: "jasonp",
+            dataType: "jsonp",
             crossDomain: true,
             success: function (data) {
                 $("#templateTemplate").tmpl(data).appendTo("#templateSelect");
