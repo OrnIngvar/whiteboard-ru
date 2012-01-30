@@ -30,6 +30,7 @@
     var draggingMode = false;
 
     function Rectangle(x, y) {
+        this.ClassName = "Rectangle";
         this.x = x;
         this.y = y;
         this.endX = x;
@@ -92,6 +93,7 @@
 
     // Circle
     function Circle(x, y) {
+        this.ClassName = "Circle";
         this.x = x;
         this.y = y;
         this.radius = x + y / 2;
@@ -134,6 +136,7 @@
 
     //Line
     function Line(x,y){
+        this.ClassName = "Line";
         this.x = x;
         this.y = y;
         this.endX = x;
@@ -173,6 +176,7 @@
 
     // Pen
     function Pen(x, y) {
+        this.ClassName = "Pen";
         this.points = [];
 
         var firstPoint =
@@ -225,6 +229,7 @@
 
     //Text
     function Text(x,y){
+        this.ClassName = "Text";
         this.x = x;
         this.y = y;
     }
@@ -289,15 +294,6 @@
         var canvas = document.getElementById("theCanvas");
         var context = canvas.getContext("2d");
 
-        var startX = 0;
-        var startY = 0;
-        var mouseIsDown = false;
-        /*
-        var centerX = canvas.width / 2;
-        var centerY = canvas.height / 2;
-        var radius = 70;
-        */
-
         $("#theCanvas").mousedown(function (e) {
             var mouseX = e.pageX - this.offsetLeft;
             var mouseY = e.pageY - this.offsetTop;
@@ -318,25 +314,6 @@
                 console.log("factory : " + factory(mouseX, mouseY));
                 shapes.push(factory(mouseX, mouseY));
             }
-            /*
-            var x = e.pageX - this.offsetLeft;
-            var y = e.pageY - this.offsetTop;
-            startX = x;
-            startY = y;
-
-            mouseIsDown = true;
-
-            shapes.push(factory(x, y));
-            $("#message").text("mousedown x: " + x + " y: " + y + " factory: " + factory);
-            */
-
-        });
-
-        $("#theCanvas").mouseup(function (e) {
-            drawingActive = false;
-            dragging = false;
-            console.log("shapes length : " + shapes.length);
-//            mouseIsDown = false;
         });
 
         $("#theCanvas").mousemove(function (e) {
@@ -356,26 +333,15 @@
                 selection[0].MoveTo(x, y);
                 Redraw(context);
             }
-            /*
-            if (mouseIsDown) {
-                var x = e.pageX - this.offsetLeft;
-                var y = e.pageY - this.offsetTop;
-
-                var lastShape = shapes[ shapes.length - 1];
-
-                lastShape.SetEnd(x, y);
-
-                if (lastShape != undefined) {
-                    lastShape.SetEnd(x, y);
-                    Redraw(context);
-                }
-
-                $("#message").text('factory: ' + factory);
-            }
-            */
         });
 
-        $('#canvasDiv').mouseleave(function (e) {
+        $("#theCanvas").mouseup(function (e) {
+            drawingActive = false;
+            dragging = false;
+            console.log("shapes length : " + shapes.length);
+        });
+
+        $('#theCanvas').mouseleave(function (e) {
             dragging = false;
             drawingActive = false;
         });
@@ -383,7 +349,7 @@
         $("#saveTemplate").click(function () {
             var title = prompt("Whats the name of the template?");
             if (title == "") {
-                var stringifiedArray = Stringify(g_shapes);
+                var stringifiedArray = Stringify(shapes);
                 var param = { "user" : "dabs",
                     "name" : title,
                     "content" : stringifiedArray,
@@ -425,7 +391,7 @@
                     for (var i = 0; i < items.length; i++){
                         var func = eval(items[i].ClassName);
                         items[i].__proto__ = func.prototype;
-                        g_shapes.push(items[i]);
+                        shapes.push(items[i]);
                     }
 
                     Redraw(context);
@@ -458,7 +424,7 @@
     });
 
 </script>
-<canvas id="theCanvas" width="400" height="400">
+<canvas id="theCanvas" width="800" height="400">
     <p>No support for canvas, sorry</p>
 </canvas>
 <p>
@@ -477,8 +443,5 @@
         <option value='${ID}'>${WhiteboardTitle}</option>
     </script>
 </p>
-<p id="message"></p>
-
-<p id="message2"></p>
 </body>
 </html>
