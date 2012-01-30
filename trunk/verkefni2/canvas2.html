@@ -348,7 +348,7 @@
 
         $("#saveTemplate").click(function () {
             var title = prompt("Whats the name of the template?");
-            if (title == "") {
+            if (title != "") {
                 var stringifiedArray = Stringify(shapes);
                 var param = { "user" : "dabs",
                     "name" : title,
@@ -433,6 +433,7 @@
 <button onclick="setShape('Pen');">Pen</button>
 <button onclick="setShape('Line');">Line</button>
 <button onclick="setShape('Text');">Text</button>
+<button id="saveTemplate">Save template</button>
 <button onclick="if (draggingMode) draggingMode = false; else draggingMode=true">Drag</button>
 </p>
 <p>
