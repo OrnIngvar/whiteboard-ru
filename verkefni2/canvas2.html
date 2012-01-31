@@ -25,6 +25,9 @@
 
     var selection = [];
 
+    var canv_height;
+    var canv_width;
+
     var drawingActive = false;
     var dragging = false;
     var draggingMode = false;
@@ -141,10 +144,16 @@
         this.y = y;
         this.endX = x;
         this.endY = y;
+        this.mouse = false;
     }
     Line.prototype.Draw = function(ctx){
+        ctx.clearRect(0,0, canv_width, canv_height );
+        ctx.beginPath();
         ctx.moveTo(this.x,this.y);
         ctx.lineTo(this.endX,this.endY);
+        if( ctx.isPointInPath(this.x, this.y) ){
+            mouse = true;
+        }
         ctx.stroke();
     }
     Line.prototype.SetEnd = function (x, y) {
@@ -154,8 +163,11 @@
     Line.prototype.contains = function (mx, my) {
         // All we have to do is make sure the Mouse X,Y fall in the area between
         // the shape's X and (X + Height) and its Y and (Y + Height)
+        return mouse;
+        /*
         return  (this.x <= mx) && (this.x + this.endX >= mx) &&
                 (this.y <= my) && (this.y + this.endY >= my);
+                */
     }
     Line.prototype.MoveStart = function(x,y){
         this.lastMoveX = x;
@@ -293,12 +305,12 @@
 
         var canvas = document.getElementById("theCanvas");
         var context = canvas.getContext("2d");
-
+        canv_height = canvas.height;
+        canv_width = canvas.width;
         $("#theCanvas").mousedown(function (e) {
             var mouseX = e.pageX - this.offsetLeft;
             var mouseY = e.pageY - this.offsetTop;
             if(draggingMode){
-                selection = [];
                 drawingActive = false;
                 var l = shapes.length;
                 for (var i = l - 1; i >= 0; i--) {
