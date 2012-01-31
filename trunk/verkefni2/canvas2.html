@@ -126,8 +126,8 @@
     Circle.prototype.contains = function (mx, my) {
         var minX = Math.min(this.x, this.endX);
         var minY = Math.min(this.y, this.endY);
-        var width = Math.abs(this.endX, this.x);
-        var height = Math.abs(this.endY, this.Y);
+        var width = Math.abs(this.endX - this.x);
+        var height = Math.abs(this.endY - this.y);
 
         if((minX <= mx && mx <= (minX + width))
                 && (minY <= my && my <= (minY + height))){
@@ -160,15 +160,15 @@
         this.y = y;
         this.endX = x;
         this.endY = y;
-        this.mouse = false;
+        this.color = currColor;
+        this.lineWidth = lineWidth;
     }
     Line.prototype.Draw = function(ctx){
+        ctx.strokeStyle = this.color;
+        ctx.lineWidth = this.lineWidth;
         ctx.beginPath();
         ctx.moveTo(this.x,this.y);
         ctx.lineTo(this.endX,this.endY);
-        if( ctx.isPointInPath(this.x, this.y) ){
-            mouse = true;
-        }
         ctx.stroke();
     }
     Line.prototype.SetEnd = function (x, y) {
@@ -176,7 +176,16 @@
         this.endY = y;
     }
     Line.prototype.contains = function (mx, my) {
-        return mouse;
+        var minX = Math.min(this.x, this.endX);
+        var minY = Math.min(this.y, this.endY);
+        var width = Math.abs(this.endX, this.x);
+        var height = Math.abs(this.endY, this.y);
+
+        if((minX <= mx && mx <= (minX + width))
+                && (minY <= my && my <= (minY + height))){
+            return true;
+        }
+        return false;
     }
     Line.prototype.MoveStart = function(x,y){
         this.lastMoveX = x;
@@ -231,10 +240,23 @@
         }
     }
     Pen.prototype.contains = function (mx, my) {
+        var minX = Math.min(this.x, this.endX);
+        var minY = Math.min(this.y, this.endY);
+        var width = Math.abs(this.endX, this.x);
+        var height = Math.abs(this.endY, this.Y);
+
+        if((minX <= mx && mx <= (minX + width))
+                && (minY <= my && my <= (minY + height))){
+            console.log("Pen contains returns true");
+            return true;
+        }
+        console.log("Pen contains returns false");
+        return false;
+        /*
         console.log( "Pen contains returns : " + this.mouse);
         return this.mouse;
         //console.log( this.points);
-        /*
+
         var checkpoint =
         {
             "x":mx,
@@ -287,6 +309,8 @@
         this.ClassName = "Text";
         this.x = x;
         this.y = y;
+        this.endX = x;
+        this.endY = y;
     }
     Text.prototype.SetEnd = function(x,y){
         this.endX = x;
@@ -297,10 +321,9 @@
         ctx.fillText("Hello World!", this.x, this.y);
     }
     Text.prototype.contains = function (mx, my) {
-        // All we have to do is make sure the Mouse X,Y fall in the area between
-        // the shape's X and (X + Height) and its Y and (Y + Height)
-        return  (this.x <= mx) && (this.x + this.endX >= mx) &&
-                (this.y <= my) && (this.y + this.endY >= my);
+        return  (this.x - 40 <= mx) && (this.x + this.endX - 40 >= mx) &&
+                (this.y - 40 <= my) && (this.y - 40 + this.endY >= my);
+
     }
     Text.prototype.MoveStart = function(x,y){
         this.lastMoveX = x;
@@ -368,7 +391,6 @@
                 }
             }else{
                 drawingActive = true;
-                console.log("factory : " + factory(mouseX, mouseY));
                 shapes.push(factory(mouseX, mouseY));
             }
         });
