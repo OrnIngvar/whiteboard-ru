@@ -60,14 +60,6 @@
         this.endY = y;
     }
     Rectangle.prototype.contains = function (x, y) {
-
-        if(x < this.x + 15 + this.endX && x > this.x - 15 +
-                this.endX && y < this.y + 15 + this.endY &&
-                y > this.y -15 + this.endY){
-            console.log("computer says true");
-        }
-
-        //TODO : Þetta virkar bara fyrir eina línu
         var minX = Math.min(this.x, this.endX);
         var minY = Math.min(this.y, this.endY);
         var width = Math.abs(this.endX - this.x);
@@ -231,14 +223,11 @@
         ctx.lineWidth = "3";
         for (i = 0; i < this.points.length; i++) {
             ctx.lineTo(this.points[i].x, this.points[i].y);
-            console.log("x : " + this.points[i].x + " y : " + this.points[i].y);
-            //TODO : Skilar alltaf true ??
-            if( ctx.isPointInPath(this.points[i].x, this.points[i].y) ){
-                this.mouse = true;
-            }
+
             ctx.stroke();
         }
     }
+    //This does not work
     Pen.prototype.contains = function (mx, my) {
         var minX = Math.min(this.x, this.endX);
         var minY = Math.min(this.y, this.endY);
@@ -271,7 +260,6 @@
             console.log( "point y : " + this.points[i].y);
             console.log( "mx : " + mx);
             console.log( "my : " + my);
-
 
             if (this.points[i].x == mx || this.points[i].y == my){
                 console.log("pen contains is true");
@@ -417,7 +405,6 @@
         $("#theCanvas").mouseup(function (e) {
             drawingActive = false;
             dragging = false;
-            console.log("shapes length : " + shapes.length);
         });
 
         $('#theCanvas').mouseleave(function (e) {
