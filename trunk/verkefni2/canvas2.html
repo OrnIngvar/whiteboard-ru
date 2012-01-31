@@ -297,6 +297,7 @@
         $("#theCanvas").mousedown(function (e) {
             var mouseX = e.pageX - this.offsetLeft;
             var mouseY = e.pageY - this.offsetTop;
+            selection = [];
             if(draggingMode){
                 drawingActive = false;
                 var l = shapes.length;
