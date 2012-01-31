@@ -422,6 +422,14 @@
                 alert("error:\n" + xhr + "\n" + err);
             }
         });
+
+        $('#drag_btn').click(function() {
+            if (draggingMode == true){
+                $('#drag_btn').html('Disable dragging');
+            } else {
+                $('#drag_btn').html('Enable dragging');
+            }
+        });
     });
 
 </script>
@@ -435,7 +443,7 @@
 <button onclick="setShape('Line');">Line</button>
 <button onclick="setShape('Text');">Text</button>
 <button id="saveTemplate">Save template</button>
-<button onclick="if (draggingMode) draggingMode = false; else draggingMode=true">Drag</button>
+<button id="drag_btn" onclick="if (draggingMode) draggingMode = false; else draggingMode=true">Enable dragging</button>
 </p>
 <p>
     <select multiple="multiple" id="templateSelect">
