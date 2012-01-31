@@ -28,6 +28,9 @@
     var canv_height;
     var canv_width;
 
+    var mouseX = 999;
+    var mouseY = 999;
+
     var drawingActive = false;
     var dragging = false;
     var draggingMode = false;
@@ -99,15 +102,21 @@
         this.ClassName = "Circle";
         this.x = x;
         this.y = y;
-        this.radius = x + y / 2;
+        this.endX = x;
+        this.endY = y;
+        this.color = currColor;
+        this.lineWidth = lineWidth;
     }
     Circle.prototype.Draw = function (ctx) {
+        var minX = Math.min(this.x, this.endX);
+        var minY = Math.min(this.y, this.endY);
+        var width = Math.abs(this.endX - this.x);
+        var height = Math.abs(this.endY - this.y);
+
+        ctx.strokeStyle = this.color;
+        ctx.lineWidth = this.lineWidth;
         ctx.beginPath();
-        ctx.arc(this.x, this.y, 70, 0, 2 * Math.PI, false);
-        ctx.fillStyle = "#8ED6FF";
-        ctx.fill();
-        ctx.lineWidth = 5;
-        ctx.strokeStyle = "black";
+        ctx.arc(minX + (width / 2), minY + (height / 2), width / 2, 0, 2 * Math.PI, false);
         ctx.stroke();
     }
     Circle.prototype.SetEnd = function (x, y) {
@@ -115,10 +124,17 @@
         this.endY = y;
     }
     Circle.prototype.contains = function (mx, my) {
-        // All we have to do is make sure the Mouse X,Y fall in the area between
-        // the shape's X and (X + Height) and its Y and (Y + Height)
-        return  (this.x <= mx) && (this.x + this.endX >= mx) &&
-                (this.y <= my) && (this.y + this.endY >= my);
+        var minX = Math.min(this.x, this.endX);
+        var minY = Math.min(this.y, this.endY);
+        var width = Math.abs(this.endX, this.x);
+        var height = Math.abs(this.endY, this.Y);
+
+        if((minX <= mx && mx <= (minX + width))
+                && (minY <= my && my <= (minY + height))){
+            return true;
+        }
+        return false;
+
     }
     Circle.prototype.MoveStart = function(x,y){
         this.lastMoveX = x;
@@ -147,7 +163,6 @@
         this.mouse = false;
     }
     Line.prototype.Draw = function(ctx){
-        ctx.clearRect(0,0, canv_width, canv_height );
         ctx.beginPath();
         ctx.moveTo(this.x,this.y);
         ctx.lineTo(this.endX,this.endY);
@@ -161,13 +176,7 @@
         this.endY = y;
     }
     Line.prototype.contains = function (mx, my) {
-        // All we have to do is make sure the Mouse X,Y fall in the area between
-        // the shape's X and (X + Height) and its Y and (Y + Height)
         return mouse;
-        /*
-        return  (this.x <= mx) && (this.x + this.endX >= mx) &&
-                (this.y <= my) && (this.y + this.endY >= my);
-                */
     }
     Line.prototype.MoveStart = function(x,y){
         this.lastMoveX = x;
@@ -190,6 +199,7 @@
     function Pen(x, y) {
         this.ClassName = "Pen";
         this.points = [];
+        this.mouse = false;
 
         var firstPoint =
         {
@@ -209,18 +219,51 @@
     }
     Pen.prototype.Draw = function (ctx) {
         ctx.beginPath();
-
+        ctx.lineWidth = "3";
         for (i = 0; i < this.points.length; i++) {
-            //ctx.moveTo(this.points[i].x, this.points[i].y);
             ctx.lineTo(this.points[i].x, this.points[i].y);
+            console.log("x : " + this.points[i].x + " y : " + this.points[i].y);
+            //TODO : Skilar alltaf true ??
+            if( ctx.isPointInPath(this.points[i].x, this.points[i].y) ){
+                this.mouse = true;
+            }
             ctx.stroke();
         }
     }
     Pen.prototype.contains = function (mx, my) {
-        // All we have to do is make sure the Mouse X,Y fall in the area between
-        // the shape's X and (X + Height) and its Y and (Y + Height)
+        console.log( "Pen contains returns : " + this.mouse);
+        return this.mouse;
+        //console.log( this.points);
+        /*
+        var checkpoint =
+        {
+            "x":mx,
+            "y":my
+        };
+        console.log(" inArray check : " + $.inArray(checkpoint, this.points) )
+        return ( $.inArray(mx, shapes) );
+*/
+        /*
+        for (i = 0; i < this.points.length; i++){
+            console.log( "point x : " + this.points[i].x);
+            console.log( "point y : " + this.points[i].y);
+            console.log( "mx : " + mx);
+            console.log( "my : " + my);
+
+
+            if (this.points[i].x == mx || this.points[i].y == my){
+                console.log("pen contains is true");
+                return true;
+            }
+            else{
+                console.log("pen contains is false");
+                return false;
+            }
+        }
+        /*
         return  (this.x <= mx) && (this.x + this.endX >= mx) &&
                 (this.y <= my) && (this.y + this.endY >= my);
+                */
     }
     Pen.prototype.MoveStart = function(x,y){
         this.lastMoveX = x;
