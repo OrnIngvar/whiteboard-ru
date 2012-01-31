@@ -311,6 +311,7 @@
             var mouseX = e.pageX - this.offsetLeft;
             var mouseY = e.pageY - this.offsetTop;
             if(draggingMode){
+                selection = [];
                 drawingActive = false;
                 var l = shapes.length;
                 for (var i = l - 1; i >= 0; i--) {
