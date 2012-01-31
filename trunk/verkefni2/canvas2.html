@@ -23,6 +23,9 @@
     var currColor = "Black";
     var lineWidth = "3";
 
+    var currFont = "Calibri";
+    var currFontSize = "40pt";
+
     var selection = [];
 
     var canv_height;
@@ -305,7 +308,8 @@
         this.endY = y;
     }
     Text.prototype.Draw = function(ctx){
-        ctx.font = "40pt Calibri";
+        ctx.font = currFontSize + " " + currFont;
+        ctx.fillStyle = currColor;
         ctx.fillText("Hello World!", this.x, this.y);
     }
     Text.prototype.contains = function (mx, my) {
@@ -495,6 +499,19 @@
                 $('#drag_btn').html('Enable dragging');
             }
         });
+
+        $('#color').change(function() {
+            currColor = $(this).find("option:selected").text();
+        });
+        $('#line_width').change(function() {
+            lineWidth = $(this).find("option:selected").text();
+        });
+        $('#font_type').change(function() {
+            currFont = $(this).find("option:selected").text();
+        });
+        $('#font_size').change(function() {
+            currFontSize = $(this).find("option:selected").text();
+        });
     });
 
 </script>
@@ -510,7 +527,32 @@
 <button id="saveTemplate">Save template</button>
 <button id="drag_btn" onclick="if (draggingMode) draggingMode = false; else draggingMode=true">Enable dragging</button>
 </p>
+<label>Color</label>
+<select id="color">
+    <option>Black</option>
+    <option>Red</option>
+    <option>Green</option>
+    <option>Blue</option>
+</select>
+<label>Line width</label>
+<select id="line_width">
+    <option>1</option>
+<option>2</option>
+<option>3</option>
+<option>4</option>
+</select>
+<label>Font</label>
+<select id="font_type">
+    <option>Calibri</option>
+    <option>Times New Roman</option>
+</select>
+<label>Font size</label>
+<select id="font_size">
+    <option>20</option>
+    <option>30</option>
+</select>
 <p>
+    <label>Templates</label>
     <select multiple="multiple" id="templateSelect">
 
     </select>
