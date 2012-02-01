@@ -308,6 +308,7 @@
         this.endY = y;
         this.color = currColor;
         this.font = currFontSize + " " + currFont;
+        this.textContent = textContent;
     }
     Text.prototype.SetEnd = function(x,y){
         this.endX = x;
@@ -316,7 +317,7 @@
     Text.prototype.Draw = function(ctx){
         ctx.font = this.font;
         ctx.fillStyle = this.color;
-        ctx.fillText(textContent, this.x, this.y);
+        ctx.fillText(this.textContent, this.x, this.y);
     };
     Text.prototype.contains = function (mx, my) {
         return  (this.x - 40 <= mx) && (this.x + this.endX - 40 >= mx) &&
@@ -523,6 +524,19 @@
         $("#text_input").keyup(function () {
             textContent = $(this).val();
         }).keyup();
+
+        $('#prev_btn').click(function() {
+            if (shapes.length > 0) {
+                next_shapes.push(shapes.pop());
+                Redraw(context);
+            }
+        });
+        $('#next_btn').click(function() {
+            if (prev_shapes.length > 0) {
+                shapes.push(prev_shapes.pop());
+                Redraw(context);
+            }
+        });
     });
 
 </script>
@@ -538,6 +552,8 @@
 <input id="text_input" type="text">
 <button id="saveTemplate">Save template</button>
 <button id="drag_btn" onclick="if (draggingMode) draggingMode = false; else draggingMode=true">Enable dragging</button>
+<button id="prev_btn">Prev</button>
+<button id="next_btn">Next</button>
 </p>
 <label>Color</label>
 <select id="color">
