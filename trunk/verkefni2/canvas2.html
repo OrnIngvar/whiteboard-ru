@@ -17,8 +17,7 @@
     var factory = createRect;
 
     var shapes = [];
-    var prev_shapes = [];
-    var next_shapes = [];
+    var redoArray = [];
 
     var currColor = "Black";
     var lineWidth = "3";
@@ -525,15 +524,15 @@
             textContent = $(this).val();
         }).keyup();
 
-        $('#prev_btn').click(function() {
+        $('#undo_btn').click(function() {
             if (shapes.length > 0) {
-                next_shapes.push(shapes.pop());
+                redoArray.push(shapes.pop());
                 Redraw(context);
             }
         });
-        $('#next_btn').click(function() {
-            if (prev_shapes.length > 0) {
-                shapes.push(prev_shapes.pop());
+        $('#redo_btn').click(function() {
+            if (redoArray.length > 0) {
+                shapes.push(redoArray.pop());
                 Redraw(context);
             }
         });
@@ -552,8 +551,8 @@
 <input id="text_input" type="text">
 <button id="saveTemplate">Save template</button>
 <button id="drag_btn" onclick="if (draggingMode) draggingMode = false; else draggingMode=true">Enable dragging</button>
-<button id="prev_btn">Prev</button>
-<button id="next_btn">Next</button>
+<button id="undo_btn">Undo</button>
+<button id="redo_btn">Redo</button>
 </p>
 <label>Color</label>
 <select id="color">
