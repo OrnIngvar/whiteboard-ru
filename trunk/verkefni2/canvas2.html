@@ -54,14 +54,14 @@
         var width = Math.abs(this.endX - this.x);
         var height = Math.abs(this.endY - this.y);
 
-        ctx.lineWidth = lineWidth;
+        ctx.lineWidth = this.lineWidth;
         ctx.strokeStyle = this.color;
         ctx.strokeRect(minX, minY, width, height);
-    }
+    };
     Rectangle.prototype.SetEnd = function (x, y) {
         this.endX = x;
         this.endY = y;
-    }
+    };
     Rectangle.prototype.contains = function (x, y) {
         var minX = Math.min(this.x, this.endX);
         var minY = Math.min(this.y, this.endY);
@@ -74,11 +74,11 @@
         }
         console.log("Rectangle contains returns false");
         return false;
-    }
+    };
     Rectangle.prototype.MoveStart = function(x,y){
         this.lastMoveX = x;
         this.lastMoveY = y;
-    }
+    };
     Rectangle.prototype.MoveTo = function(x,y){
         var diffX = x - this.lastMoveX;
         var diffY = y - this.lastMoveY;
@@ -90,7 +90,7 @@
 
         this.lastMoveX = x;
         this.lastMoveY = y;
-    }
+    };
 
     // Circle
     function Circle(x, y) {
@@ -113,11 +113,11 @@
         ctx.beginPath();
         ctx.arc(minX + (width / 2), minY + (height / 2), width / 2, 0, 2 * Math.PI, false);
         ctx.stroke();
-    }
+    };
     Circle.prototype.SetEnd = function (x, y) {
         this.endX = x;
         this.endY = y;
-    }
+    };
     Circle.prototype.contains = function (mx, my) {
         var minX = Math.min(this.x, this.endX);
         var minY = Math.min(this.y, this.endY);
@@ -129,12 +129,11 @@
             return true;
         }
         return false;
-
-    }
+    };
     Circle.prototype.MoveStart = function(x,y){
         this.lastMoveX = x;
         this.lastMoveY = y;
-    }
+    };
     Circle.prototype.MoveTo = function(x,y){
         var diffX = x - this.lastMoveX;
         var diffY = y - this.lastMoveY;
@@ -146,7 +145,7 @@
 
         this.lastMoveX = x;
         this.lastMoveY = y;
-    }
+    };
 
     //Line
     function Line(x,y){
@@ -165,11 +164,11 @@
         ctx.moveTo(this.x,this.y);
         ctx.lineTo(this.endX,this.endY);
         ctx.stroke();
-    }
+    };
     Line.prototype.SetEnd = function (x, y) {
         this.endX = x;
         this.endY = y;
-    }
+    };
     Line.prototype.contains = function (mx, my) {
         var minX = Math.min(this.x, this.endX);
         var minY = Math.min(this.y, this.endY);
@@ -181,11 +180,11 @@
             return true;
         }
         return false;
-    }
+    };
     Line.prototype.MoveStart = function(x,y){
         this.lastMoveX = x;
         this.lastMoveY = y;
-    }
+    };
     Line.prototype.MoveTo = function(x,y){
         var diffX = x - this.lastMoveX;
         var diffY = y - this.lastMoveY;
@@ -197,13 +196,15 @@
 
         this.lastMoveX = x;
         this.lastMoveY = y;
-    }
+    };
 
     // Pen
     function Pen(x, y) {
         this.ClassName = "Pen";
         this.points = [];
         this.mouse = false;
+        this.color = currColor;
+        this.lineWidth = lineWidth;
 
         var firstPoint =
         {
@@ -223,19 +224,20 @@
     }
     Pen.prototype.Draw = function (ctx) {
         ctx.beginPath();
-        ctx.lineWidth = "3";
+        ctx.lineWidth = this.lineWidth;
+        ctx.strokeStyle = this.color;
         for (i = 0; i < this.points.length; i++) {
             ctx.lineTo(this.points[i].x, this.points[i].y);
 
             ctx.stroke();
         }
-    }
+    };
     //This does not work
     Pen.prototype.contains = function (mx, my) {
         var minX = Math.min(this.x, this.endX);
         var minY = Math.min(this.y, this.endY);
-        var width = Math.abs(this.endX, this.x);
-        var height = Math.abs(this.endY, this.Y);
+        var width = Math.abs(this.endX -this.x);
+        var height = Math.abs(this.endY - this.y);
 
         if((minX <= mx && mx <= (minX + width))
                 && (minY <= my && my <= (minY + height))){
@@ -277,11 +279,11 @@
         return  (this.x <= mx) && (this.x + this.endX >= mx) &&
                 (this.y <= my) && (this.y + this.endY >= my);
                 */
-    }
+    };
     Pen.prototype.MoveStart = function(x,y){
         this.lastMoveX = x;
         this.lastMoveY = y;
-    }
+    };
     Pen.prototype.MoveTo = function(x,y){
         var diffX = x - this.lastMoveX;
         var diffY = y - this.lastMoveY;
@@ -293,7 +295,7 @@
 
         this.lastMoveX = x;
         this.lastMoveY = y;
-    }
+    };
 
     //Text
     function Text(x,y){
@@ -302,25 +304,27 @@
         this.y = y;
         this.endX = x;
         this.endY = y;
+        this.color = currColor;
+        this.font = currFontSize + " " + currFont;
     }
     Text.prototype.SetEnd = function(x,y){
         this.endX = x;
         this.endY = y;
-    }
+    };
     Text.prototype.Draw = function(ctx){
-        ctx.font = currFontSize + " " + currFont;
-        ctx.fillStyle = currColor;
+        ctx.font = this.font;
+        ctx.fillStyle = this.color;
         ctx.fillText("Hello World!", this.x, this.y);
-    }
+    };
     Text.prototype.contains = function (mx, my) {
         return  (this.x - 40 <= mx) && (this.x + this.endX - 40 >= mx) &&
                 (this.y - 40 <= my) && (this.y - 40 + this.endY >= my);
 
-    }
+    };
     Text.prototype.MoveStart = function(x,y){
         this.lastMoveX = x;
         this.lastMoveY = y;
-    }
+    };
     Text.prototype.MoveTo = function(x,y){
         var diffX = x - this.lastMoveX;
         var diffY = y - this.lastMoveY;
@@ -332,7 +336,7 @@
 
         this.lastMoveX = x;
         this.lastMoveY = y;
-    }
+    };
 
     function createRect(x, y) {
         return new Rectangle(x, y);
