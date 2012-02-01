@@ -25,6 +25,8 @@
 
     var currFont = "Calibri";
     var currFontSize = "40pt";
+    var textContent = "";
+
 
     var selection = [];
 
@@ -314,7 +316,7 @@
     Text.prototype.Draw = function(ctx){
         ctx.font = this.font;
         ctx.fillStyle = this.color;
-        ctx.fillText("Hello World!", this.x, this.y);
+        ctx.fillText(textContent, this.x, this.y);
     };
     Text.prototype.contains = function (mx, my) {
         return  (this.x - 40 <= mx) && (this.x + this.endX - 40 >= mx) &&
@@ -364,6 +366,8 @@
     }
 
     $(document).ready(function () {
+
+        $("#text_input").text(textContent);
 
         var canvas = document.getElementById("theCanvas");
         var context = canvas.getContext("2d");
@@ -516,6 +520,9 @@
         $('#font_size').change(function() {
             currFontSize = $(this).find("option:selected").text();
         });
+        $("#text_input").keyup(function () {
+            textContent = $(this).val();
+        }).keyup();
     });
 
 </script>
@@ -528,6 +535,7 @@
 <button onclick="setShape('Pen');">Pen</button>
 <button onclick="setShape('Line');">Line</button>
 <button onclick="setShape('Text');">Text</button>
+<input id="text_input" type="text">
 <button id="saveTemplate">Save template</button>
 <button id="drag_btn" onclick="if (draggingMode) draggingMode = false; else draggingMode=true">Enable dragging</button>
 </p>
@@ -552,8 +560,8 @@
 </select>
 <label>Font size</label>
 <select id="font_size">
-    <option>20</option>
-    <option>30</option>
+    <option>20pt</option>
+    <option>30pt</option>
 </select>
 <p>
     <label>Templates</label>
